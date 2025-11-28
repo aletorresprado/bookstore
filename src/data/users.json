@@ -1,0 +1,17 @@
+[
+  {
+    "id": "44b9e934-dbbc-4bd1-98b3-09a5e4a1ce75",
+    "email": "ale@ale.com",
+    "password": "12345"
+  },
+  {
+    "id": "d20c274c-97fc-4d2b-82c6-4bec5ae5e4cb",
+    "email": "admin@ale.com",
+    "password": "12345"
+  },
+  {
+    "id": "d943789e-1b8e-4bb6-810c-c9247e81c885",
+    "email": "loco@ale.com",
+    "password": "12345"
+  }
+]

@@ -2,6 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
+//llego con /productos  esta es la ruta raiz de este endpoint
 //rutas para productos
 router.get('/', (req, res) => {
   res.send('Lista de productos');
