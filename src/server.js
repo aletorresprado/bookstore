@@ -20,16 +20,12 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // para parsear datos de formularios 
 
-
-
 //definir las routes direcciones
-app.use('/api/products', productRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/favs', favsRoutes);
-app.use('/api/users', usersRoutes);
-
-
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/cart', cartRoutes);
+app.use('/api/v1/favs', favsRoutes);
+app.use('/api/v1/users', usersRoutes);
 
 //puerto desde variables de entorno o 3000 por defecto
 const port = process.env.PORT || 3000;

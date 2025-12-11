@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
         default: 'user'
     }
 }, {
+    // Opcional: agrega campos createdAt y updatedAt automáticamente
     timestamps: true 
 });
 //Paso 3 exportar el modelo(dos argumentos: nombre del Alias y esquema)

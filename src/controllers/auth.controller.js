@@ -13,16 +13,6 @@ const register = async (req, res) => { // Faltaba async en la función
         message: 'Faltan datos obligatorios' 
       });
     }
-    
-    // valido que el email no esté registrado
-    const exist = await User.findOne({ email }); 
-
-    if (exist) {
-      return res.status(409).json({
-        ok: false,
-        message: 'El email ya está registrado'
-      });
-    }
 
     // crear el usuario con mongoose
     const newUser = await User.create({ 
@@ -57,20 +47,11 @@ const login = async (req, res) => {
     try{
       const { email, password } = req.body;
       // validar que llegue la info básica
-    if (!email || !password) {
-      return res.status(400).json({ 
-        ok: false,
-        message: 'Todos los campos son obligatorios' 
-      });
-    }
+   
+      
     const user = await User.findOne({email, password});
 
-    if(!user){
-      return res.status(401).json({
-        ok: false,
-        message: 'Credenciales invalidas'
-      });
-    }
+  
     return res.status(200).json({
       ok: true,
       message: 'Login exitoso 👍',
@@ -91,7 +72,7 @@ const login = async (req, res) => {
   }
 
 };
-
+// Obtener todos los usuarios
 const getAllUsers = async (req, res) => {
   // Implementar obtener todos los usuarios
   try{
@@ -123,8 +104,63 @@ const getAllUsers = async (req, res) => {
   }
 }
 
-const deleteUser = (req, res) => {
-  // Implementar eliminar usuario
+// Borrar Usuarios con 'deleteUser' 
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedUser = await User.findByIdAndDelete(id).select('-password');
+
+   
+    return res.status(200).json({
+      ok: true,
+      message: 'Usuario eliminado correctamente',
+      user: deletedUser
+      
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Error del servidor'
+    });
+  }
 };
 
-module.exports = { register, login, getAllUsers, deleteUser };
+// updateUserRole
+const updateUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    // Actualizamos solo el campo role
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true, runValidators: true } // Opciones para devolver el documento actualizado y validar el esquema
+    ).select('-password'
+    );
+
+
+    // Respuesta controlada (sin exponer password u otros datos)
+    return res.status(200).json({
+      ok: true,
+      message: 'Rol actualizado correctamente',
+      user: {
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Error en updateUserRole:', error);
+    return res.status(500).json({
+      ok: false,
+      message: 'Error del servidor'
+    });
+  }
+};
+module.exports = { register, login, getAllUsers, deleteUser, updateUserRole };
