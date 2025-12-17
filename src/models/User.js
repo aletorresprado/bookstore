@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
         required: true, 
         unique: true
     },
+    profilePic: {
+        type: String,
+        default: null
+    },
     password: {
         type: String,
         required: true 
@@ -22,7 +26,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin', 'superadmin'],
         default: 'user'
-    }
+    },
 }, {
     // Opcional: agrega campos createdAt y updatedAt automáticamente
     timestamps: true 

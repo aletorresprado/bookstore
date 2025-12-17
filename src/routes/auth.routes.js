@@ -1,19 +1,17 @@
-// manejar autenticación de usuarios
-const express = require('express'); 
-const { register, login, getAllUsers, deleteUser, updateUserRole } = require('../controllers/auth.controller');
-const { validateRegister, validateUserId, validateUpdateRole } = require('../middlewares/validators');
+//Enrutador para manejar la autenticación de usuarios
+const express = require("express");
+const { register, login, getAllUsers, deleteUser, updateUserRole } = require("../controllers/auth.controller");
+const { validateRegister, validateLogin, validateUserId, validateUpdateRole, validateSuperAdmin } = require("../middlewares/validator");
+const uploadProfile = require("../config/multer");
+
+const router = express.Router();
+//Llego con /auth/ - esta es la ruta raíz de este enrutador
+
+router.post("/register", uploadProfile, validateRegister, register);
+router.get("/users/:id", validateSuperAdmin, getAllUsers);
+router.post("/login", validateLogin, login);
+router.patch("/user/:id", validateUserId, validateUpdateRole, updateUserRole)
+router.delete("/user/:id", validateUserId, deleteUser); //Ruta parametrizada
 
 
-const router = express.Router();   
-//llego con /auth/ esta es la ruta raiz de este endpoint
-
-//ruta para login (endpoint de autenticación)
-router.get('/users',validateSuperAdmin, getAllUsers);
-router.post('/register',validateRegister, register); 
-router.post('/login', login);
-router.delete('/user/:id', deleteUser);
-router.patch('/user/:id', validateUserId,validateUpdateRole,updateUserRole); 
-
-
-  
 module.exports = router;
