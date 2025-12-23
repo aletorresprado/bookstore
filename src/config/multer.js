@@ -13,16 +13,17 @@ const profileStorage = multer.diskStorage({
 
     },
     filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);    
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        const uniqueSuffix = Date.now() + '-profile-' + crypto.randomUUID() + path.extname(file.originalname);  
+        cb(null, uniqueSuffix);
     }
 });
 
 // Filtro de archivos
 const fileFilter = (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = allowedTypes.test(path.extname(file.originalname).toLocaleLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
+   
     if (extname && mimetype) {
         return cb(null, true);
     } else {
@@ -37,5 +38,6 @@ const uploadProfile = multer({
     fileFilter: fileFilter
 }).single('profilePic');
 
-module.exports = uploadProfile;
 
+// Exportar la funsion de subida de archivos
+module.exports = uploadProfile;

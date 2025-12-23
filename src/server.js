@@ -10,6 +10,7 @@ const cartRoutes = require('./routes/cart.routes');
 const favsRoutes = require('./routes/favorites.routes');
 const usersRoutes = require('./routes/user.routes');
 const connectDB = require('./config/database');
+const errorHandler = require('./middlewares/errorHandler');
 
 
 const app = express();
@@ -31,6 +32,9 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/cart', cartRoutes);
 app.use('/api/v1/favs', favsRoutes);
 app.use('/api/v1/users', usersRoutes);
+
+//Acá llamo al middleware manejador de errores
+app.use(errorHandler)
 
 //puerto desde variables de entorno o 3000 por defecto
 const port = process.env.PORT || 3000;

@@ -18,6 +18,25 @@ const handleValidationsErrors = (req, res, next) => {
   next();
 };
 
+const handleValidationsErrorsWithFiles = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if(!errors.isEmpty()){
+    //si hay errores y si se subio archivo, necesito eliminarlo
+    if(req.file){
+      deleteOneFile(req.file.path)
+    }
+
+    return res.status(400).json({
+      ok: false,
+      message: "Errores de validación",
+      errors: errors.mapped(),
+    });
+  }
+
+  next()
+}
+
 //Validaciones para el registro de un usuario
 const validateRegister = [
   body("name")
@@ -29,20 +48,24 @@ const validateRegister = [
     .isLength({ min: 2 })
     .withMessage("El nombre debe tener al menos 2 caracteres"),
 
+     body("surname")
+    .notEmpty()
+    .withMessage("El apellido es requerido")
+    .isString()
+    .withMessage("El apellido debe ser un texto")
+    .trim()
+    .isLength({ min: 2 })
+    .withMessage("El apellido debe tener al menos 2 caracteres"),
+
   body("email")
     .notEmpty()
     .withMessage("El email es requerido")
     .isEmail()
     .withMessage("El email no tiene un formato válido")
     .normalizeEmail()
-    .custom(async (email, {req}) => {
+    .custom(async (email) => {
       const user = await User.findOne({ email });
-      if (user) {
-
-        // Si el usuario ya existe, eliminamos la imagen subida (si existe)
-        if (req.file) {
-          deleteOneFile(req.file.path);
-        }
+      if (user) {      
         throw new Error("El usuario ya existe");
       }
     }),
@@ -53,7 +76,7 @@ const validateRegister = [
     .isLength({ min: 6 })
     .withMessage("la contraseña debe tener por lo menos 6 caracteres"),
 
-  handleValidationsErrors,
+    handleValidationsErrorsWithFiles,
 ];
 
 //Validación del login
@@ -124,5 +147,9 @@ const validateSuperAdmin = [
 ];
 
 module.exports = {
-  validateRegister, validateLogin, validateUserId, validateUpdateRole, validateSuperAdmin, 
-};      
+  validateRegister,
+  validateLogin,
+  validateUserId,
+  validateUpdateRole,
+  validateSuperAdmin
+};

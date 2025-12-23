@@ -1,6 +1,6 @@
+//MINI CRUD DE USUARIO  -  AUTH
 const User = require('../models/User');
-const fs = require('fs'); // Módulo del sistema de archivos
-const path = require('path'); // Módulo para manejar rutas de archivos
+
 
 const getAllUsers = async (req,res) => {
     try {
@@ -32,18 +32,18 @@ const getAllUsers = async (req,res) => {
     }
 }
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {           
     
         try {
-
-        const {name, email, password} = req.body;      
+        const {name, surname, email, password} = req.body;      
 
         //Crear el usuario con mongoose
         const newUser = await User.create({
             name, 
+            surname,
             email, 
-            password,   
-            profilePic: req.file ? req.file.filename : null         
+            password,
+            profilePic: req.file ? req.file.filename  : null          
         });
 
         return res.status(201).json({
@@ -59,20 +59,15 @@ const register = async (req, res) => {
         })
             
         } catch (error) {
-            console.error(error)
-            return res.status(500).json({
-                ok:false, 
-                message: error.message
-            })
+            next(error)
         }
 }
+
 
 const login = async (req, res) => {
         try {
 
         const {email, password} = req.body;
-
-         
 
         const user = await User.findOne({email, password});
 
@@ -156,5 +151,10 @@ const deleteUser = async (req,res) => {
 
 
 
-
-module.exports = { register, login, getAllUsers, deleteUser, updateUserRole };
+module.exports = {
+    register, 
+    login,
+    getAllUsers,
+    updateUserRole,
+    deleteUser  
+}
