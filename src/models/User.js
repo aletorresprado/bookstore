@@ -62,8 +62,13 @@ userSchema.methods.comparePasswords = async function (userPassword) {
     return await bcrypt.compare(userPassword, this.password);
 }
 
-//Mtodo para generar un código de verificación
-
+//Metodo para generar un código de verificación (email)
+userSchema.methods.generateVerificationCode = function() {
+    const code = Math.floor(100000 + Math.random() * 900000).toString(); // Código de 6 dígitos
+    this.verificationCode = code;
+    this.codeExpiration = Date.now() + 15 * 60 * 1000; // Expira en 15 minutos
+    return code;
+};
 
 //Paso 3 exportar el modelo(dos argumentos: nombre del Alias y esquema)
 module.exports = mongoose.model('User', userSchema);    

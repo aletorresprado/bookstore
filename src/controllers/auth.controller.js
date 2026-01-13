@@ -1,5 +1,7 @@
 //MINI CRUD DE USUARIO  -  AUTH
+const { body } = require('express-validator');
 const User = require('../models/User');
+const { sendVerificationEmail } = require('../utils/emailService');
 
 
 const getAllUsers = async (req,res) => {
@@ -46,6 +48,29 @@ const register = async (req, res, next) => {
             profilePic: req.file ? req.file.filename  : null          
         });
 
+    // llamar al servicio de email para enviar el codigo de verificacion
+        const code = newUser.generateVerificationCode();
+        await newUser.save(); // guardar los cambios en el usuario
+
+         await sendVerificationEmail(email, name, code);
+         // Enviar el email de verificación funcion nodemailer
+     /*    try{
+            
+
+        }catch(emailError){
+            // Si hay un error al enviar el email, eliminar el usuario creado
+            await User.findByIdAndDelete(newUser._id);
+            if(req.file){
+                (req.file.path)
+        } */
+
+/* 
+        return res.status(500).json({
+            ok:false, 
+            message: 'Error al enviar el email de verificación. Por favor, intenta registrarte de nuevo.'
+        })
+    }
+ */
         return res.status(201).json({
             ok: true,
             message: 'Usuario registrado con exito!!',
@@ -63,6 +88,10 @@ const register = async (req, res, next) => {
         }
 }
 
+const verifyEmail = async (req, res, next) => {
+
+
+}
 
 const login = async (req, res) => {
         try {
@@ -149,7 +178,16 @@ const deleteUser = async (req,res) => {
 }
 
 
+//validaciones para el codigo de verificacion de email
+const validateVerifyEmail = [
+    body('email').isEmail().withMessage('El email debe ser válido'),
+    .normalizeEmail(),
+    body('code')
+    .isLength({min:6, max:6}).withMessage('El código de verificación debe tener 6 dígitos')
+    .isNumeric().withMessage('El código de verificación debe ser numérico')
 
+    handleValidationErrors
+]
 
 module.exports = {
     register, 

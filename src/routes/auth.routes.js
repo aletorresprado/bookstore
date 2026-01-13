@@ -8,6 +8,7 @@ const router = express.Router();
 //Llego con /auth/ - esta es la ruta raíz de este enrutador
 
 router.post("/register", uploadProfile, validateRegister, register);
+router.post("/verify-email", validateverifyEmail, verifyEmail);
 router.get("/users/:id", validateSuperAdmin, getAllUsers);
 router.post("/login", validateLogin, login);
 router.patch("/user/:id", validateUserId, validateUpdateRole, updateUserRole)
